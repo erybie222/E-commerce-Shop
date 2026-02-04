@@ -1,8 +1,10 @@
 from django.db import models
 
 class Category(models.Model):
-    name = models.CharField(max_length=30)
-    description = models.TextField(blank=True)
+    name = models.CharField(max_length=30, unique = True)
+    display = models.TextField(max_length=30)
+    description = models.TextField()
+
 
     def __str__(self):
         return f"{self.name}"
@@ -13,13 +15,14 @@ class Category(models.Model):
 def get_uncategorized() -> Category:
     uncategorized_obj = Category.objects.get_or_create(name="uncategorized",
                                                         defaults={
+                                                            "display": "Uncategorized",
                                                             "description": "default category for products"})
     return uncategorized_obj[0]
 
 
 class Product(models.Model):
     name = models.CharField(max_length=30)
-    description = models.TextField(blank=True)
+    description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
