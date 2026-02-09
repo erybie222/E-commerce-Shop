@@ -23,14 +23,20 @@ categories_data = [
 
 categories_data = sorted(categories_data, key=lambda d: d['name'])
 
-def createCategoryObjects() -> None:
+def create_category_objects() -> None:
     for category_data in categories_data:
         Category.objects.create(name=category_data["name"], display=category_data["display"],
                                 description=category_data["description"])
+def create_product_objects() -> None:
+    for i in range(100):
+        Product.objects.create(name=fake.company()[:50], description=fake.text(),
+                               price=fake.pydecimal(left_digits=5, right_digits=2, positive=True),
+                               stock=fake.pyint(min_value=0, max_value=10000),
+                               category=choice(Category.objects.all()))
 
 class CategoryTestCase(TestCase):
     def setUp(self):
-        createCategoryObjects()
+        create_category_objects()
     def test_categories(self):
         categories = Category.objects.all()
 
@@ -50,12 +56,8 @@ class CategoryTestCase(TestCase):
 
 class ProductTestCase(TestCase):
     def setUp(self):
-        createCategoryObjects()
-        for i in range(100):
-            Product.objects.create(name=fake.company()[:50], description=fake.text(),
-                                   price=fake.pydecimal(left_digits=5, right_digits=2, positive=True),
-                                   stock=fake.pyint(min_value=0, max_value=10000),
-                                   category=choice(Category.objects.all()) )
+        create_category_objects()
+        create_product_objects()
     def test_product_creation(self):
         products = Product.objects.all()
         self.assertEqual(len(products), 100)
