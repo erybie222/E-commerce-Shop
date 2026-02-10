@@ -1,6 +1,8 @@
+import random
 from products.models import Category, Product
 from faker import Faker
-from random import choice
+from products.data import REAL_PRODUCTS
+from accounts.models import SellerProfile
 
 
 fake = Faker()
@@ -32,9 +34,11 @@ def create_category_objects() -> list[Category]:
 def create_product_objects(count: int = 10) -> list[Product]:
     products = []
     for i in range(count):
-        product = Product.objects.create(name=fake.company()[:50], description=fake.text(),
+        real_product = random.choice(REAL_PRODUCTS)
+        product = Product.objects.create(name=real_product["name"], description=real_product["description"],
                                price=fake.pydecimal(left_digits=5, right_digits=2, positive=True),
                                stock=fake.pyint(min_value=0, max_value=10000),
-                               category=choice(Category.objects.all()))
+                               category=Category.objects.get(name=real_product["category_name"]),
+                                         seller=random.choice(SellerProfile.objects.all()))
         products.append(product)
     return products

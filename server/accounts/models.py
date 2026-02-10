@@ -17,6 +17,9 @@ class SellerProfile(models.Model):
     shop_name = models.CharField(max_length=100)
     nip = models.CharField(max_length=10, unique=True)
 
+    def __str__(self):
+        return f"{self.user.username}"
+
 class ShippingAddress(models.Model):
     buyer_profile = models.ForeignKey(BuyerProfile, on_delete=models.CASCADE, related_name='addresses')
     country = models.ForeignKey(Country, on_delete=models.CASCADE)

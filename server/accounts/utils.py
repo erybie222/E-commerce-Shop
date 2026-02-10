@@ -5,48 +5,9 @@ from accounts.models import BuyerProfile, ShippingAddress, SellerProfile
 from cities_light.models import Country, City, Region
 from faker import Faker
 from django.contrib.auth.models import User
-
+from accounts.data import REAL_LOCATIONS
 
 fake = Faker('pl_PL')
-
-REAL_LOCATIONS = [
-    {
-        'country': {'name': 'Poland', 'code2': 'PL', 'phone': '48'},
-        'region': 'Mazowieckie',
-        'city': 'Warszawa',
-        'zip': '00-001'
-    },
-    {
-        'country': {'name': 'Poland', 'code2': 'PL', 'phone': '48'},
-        'region': 'Wielkopolskie',
-        'city': 'Poznań',
-        'zip': '60-001'
-    },
-    {
-        'country': {'name': 'Poland', 'code2': 'PL', 'phone': '48'},
-        'region': 'Małopolskie',
-        'city': 'Kraków',
-        'zip': '30-001'
-    },
-    {
-        'country': {'name': 'Germany', 'code2': 'DE', 'phone': '49'},
-        'region': 'Berlin',
-        'city': 'Berlin',
-        'zip': '10115'
-    },
-    {
-        'country': {'name': 'France', 'code2': 'FR', 'phone': '33'},
-        'region': 'Île-de-France',
-        'city': 'Paris',
-        'zip': '75000'
-    },
-    {
-        'country': {'name': 'USA', 'code2': 'US', 'phone': '1'},
-        'region': 'California',
-        'city': 'Los Angeles',
-        'zip': '90001'
-    },
-]
 
 
 def create_geo_data() -> tuple[Country, Region, City, str]:
