@@ -1,38 +1,11 @@
 from django.test import TestCase
 from .models import Category , Product
-from faker import Faker
-from random import choice
 from decimal import Decimal
+from products.utils import create_product_objects , create_category_objects, categories_data
 # Create your tests here.
 
-fake = Faker()
-fake.random.seed(1000)
 
-categories_data = [
-    {'name': 'fashion', 'display': 'Fashion', 'description': 'Clothing, shoes, and accessories'},
-    {'name': 'electronics', 'display': 'Electronics', 'description': 'Gadgets, devices, and computer hardware'},
-    {'name': 'home', 'display': 'Home', 'description': 'Furniture, decor, and kitchenware'},
-    {'name': 'beauty', 'display': 'Beauty', 'description': 'Cosmetics, skincare, and fragrances'},
-    {'name': 'toys', 'display': 'Toys', 'description': 'Games and toys for all ages'},
-    {'name': 'food', 'display': 'Food', 'description': 'Groceries, snacks, and beverages'},
-    {'name': 'pet-care', 'display': 'Pet care', 'description': 'Supplies for your furry friends'},
-    {'name': 'sports', 'display': 'Sports', 'description': 'Equipment for sports and outdoor activities'},
-    {'name': 'automotive', 'display': 'Automotive', 'description': 'Car parts and accessories'},
-    {'name': 'books', 'display': 'Books', 'description': 'Books, magazines, and educational materials'},
-]
 
-categories_data = sorted(categories_data, key=lambda d: d['name'])
-
-def create_category_objects() -> None:
-    for category_data in categories_data:
-        Category.objects.create(name=category_data["name"], display=category_data["display"],
-                                description=category_data["description"])
-def create_product_objects() -> None:
-    for i in range(100):
-        Product.objects.create(name=fake.company()[:50], description=fake.text(),
-                               price=fake.pydecimal(left_digits=5, right_digits=2, positive=True),
-                               stock=fake.pyint(min_value=0, max_value=10000),
-                               category=choice(Category.objects.all()))
 
 class CategoryTestCase(TestCase):
     def setUp(self):
@@ -57,7 +30,7 @@ class CategoryTestCase(TestCase):
 class ProductTestCase(TestCase):
     def setUp(self):
         create_category_objects()
-        create_product_objects()
+        create_product_objects(100)
     def test_product_creation(self):
         products = Product.objects.all()
         self.assertEqual(len(products), 100)
