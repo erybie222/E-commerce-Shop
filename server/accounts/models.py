@@ -1,8 +1,11 @@
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import User
 from cities_light.models import Country, City, Region
 import re
+
+from products.models import Product
 
 
 # Create your models here.
@@ -29,7 +32,7 @@ class ShippingAddress(models.Model):
     phone_prefix = models.CharField(max_length=4, blank=True)
     phone_number = models.CharField(max_length=9)
     street_name = models.CharField(max_length=30)
-    street_number = models.PositiveIntegerField()
+    street_number = models.CharField(max_length=10)
     is_default = models.BooleanField(default=False)
 
     def clean(self):
@@ -53,11 +56,11 @@ class ShippingAddress(models.Model):
                     'city': f"City '{self.city}' is not in the region: '{self.region}'."
                 })
 
-        if self.country.code2 == 'PL':
-            if not re.match(r'^\d{2}-\d{3}$', self.zip_code):
-                raise ValidationError({
-                    'zip_code': "Polish zip code has format XX-XXX."
-                })
+        # if self.country.code2 == 'PL':
+        #     if not re.match(r'^\d{2}-\d{3}$', self.zip_code):
+        #         raise ValidationError({
+        #             'zip_code': "Polish zip code has format XX-XXX."
+        #         })
 
     def save(self, *args, **kwargs):
         if self.country:
@@ -66,3 +69,14 @@ class ShippingAddress(models.Model):
 
     def __str__(self):
         return f"{self.country}, {self.city}, {self.street_name}"
+
+class Review(models.Model):
+    buyer = models.ForeignKey(BuyerProfile, on_delete=models.CASCADE, related_name='reviews')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    rating = models.DecimalField(
+        max_digits=2,
+        decimal_places=1,
+        validators=[MinValueValidator(1.0), MaxValueValidator(5.0)]
+    )    description = models.TextField()
