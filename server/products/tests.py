@@ -1,7 +1,7 @@
 from django.test import TestCase
 from .models import Category , Product
 from decimal import Decimal
-from products.utils import create_product_objects , create_category_objects, categories_data
+from products.utils import create_products , create_categories, categories_data
 # Create your tests here.
 
 
@@ -9,7 +9,7 @@ from products.utils import create_product_objects , create_category_objects, cat
 
 class CategoryTestCase(TestCase):
     def setUp(self):
-        create_category_objects()
+        create_categories()
     def test_categories(self):
         categories = Category.objects.all()
 
@@ -29,8 +29,8 @@ class CategoryTestCase(TestCase):
 
 class ProductTestCase(TestCase):
     def setUp(self):
-        create_category_objects()
-        create_product_objects(100)
+        create_categories()
+        create_products(100)
     def test_product_creation(self):
         products = Product.objects.all()
         self.assertEqual(len(products), 100)

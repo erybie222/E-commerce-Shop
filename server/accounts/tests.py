@@ -1,9 +1,10 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from accounts.models import ShippingAddress, SellerProfile, BuyerProfile
+from accounts.models import ShippingAddress, SellerProfile, BuyerProfile, Review
 from cities_light.models import Country, City, Region
-from accounts.utils import create_buyers, create_sellers, create_geo_data
-
+from accounts.utils import create_buyers_with_shipping_address, create_sellers, create_geo_data, create_reviews
+import datetime
+from decimal import Decimal
 
 
 
@@ -11,8 +12,9 @@ from accounts.utils import create_buyers, create_sellers, create_geo_data
 class ECommerceDataTestCase(TestCase):
     def setUp(self):
         self.country, self.region, self.city, self.zip_code = create_geo_data()
-        self.buyers = create_buyers()
+        self.buyers = create_buyers_with_shipping_address()
         self.sellers = create_sellers()
+        self.reviews = create_reviews()
 
     def test_shipping_address_structure(self):
         addresses = ShippingAddress.objects.all()
@@ -46,3 +48,13 @@ class ECommerceDataTestCase(TestCase):
 
             nip_clean = seller.nip.replace('-', '')
             self.assertEqual(len(nip_clean), 10)
+
+    def test_review_structure(self):
+        self.assertEqual(Review.objects.count(), 10)
+        for review in Review.objects.all():
+            self.assertIsInstance(review.created_at, datetime.datetime)
+            self.assertIsInstance(review.updated_at, datetime.datetime)
+            self.assertIsInstance(review.rating, Decimal)
+            self.assertGreaterEqual(review.rating, 1)
+            self.assertLessEqual(review.rating, 5)
+            self.assertIsInstance(review.description, str)

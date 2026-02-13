@@ -1,13 +1,13 @@
 import random
-from typing import Tuple
 
-from accounts.models import BuyerProfile, ShippingAddress, SellerProfile
+from accounts.models import BuyerProfile, ShippingAddress, SellerProfile, Review
 from cities_light.models import Country, City, Region
 from faker import Faker
 from django.contrib.auth.models import User
 from accounts.data import REAL_LOCATIONS
+from products.models import Product
 
-fake = Faker('pl_PL')
+fake = Faker()
 
 
 def create_geo_data() -> tuple[Country, Region, City, str]:
@@ -22,7 +22,7 @@ def create_geo_data() -> tuple[Country, Region, City, str]:
     return country, region, city, zip_code
 
 
-def create_buyers(count: int =10) -> list[BuyerProfile]:
+def create_buyers_with_shipping_address(count: int =10) -> list[BuyerProfile]:
     buyers = []
 
     for _ in range(count):
@@ -65,3 +65,21 @@ def create_sellers(count:int =10) -> list[SellerProfile]:
         )
         sellers.append(seller)
     return sellers
+
+def create_reviews(count: int = 10) -> list[Review]:
+    reviews = []
+    buyers = list(BuyerProfile.objects.all())
+    products = list(Product.objects.all())
+
+    if not buyers or not products:
+        print("Can not generate reviews: lack of buyers or products")
+        return []
+    for _ in range(count):
+        review = Review.objects.create(
+        buyer = random.choice(buyers),
+        product = random.choice(products),
+        rating = round(random.uniform(1, 5), 1),
+        description = fake.text()
+        )
+        reviews.append(review)
+    return reviews

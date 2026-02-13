@@ -79,4 +79,5 @@ class Review(models.Model):
         max_digits=2,
         decimal_places=1,
         validators=[MinValueValidator(1.0), MaxValueValidator(5.0)]
-    )    description = models.TextField()
+    )
+    description = models.TextField()

@@ -23,7 +23,7 @@ categories_data = [
 
 categories_data = sorted(categories_data, key=lambda d: d['name'])
 
-def create_category_objects() -> list[Category]:
+def create_categories() -> list[Category]:
     categories = []
     for category_data in categories_data:
         category = Category.objects.create(name=category_data["name"], display=category_data["display"],
@@ -31,7 +31,7 @@ def create_category_objects() -> list[Category]:
         categories.append(category)
     return categories
 
-def create_product_objects(count: int = 10) -> list[Product]:
+def create_products(count: int = 10) -> list[Product]:
     products = []
     for i in range(count):
         real_product = random.choice(REAL_PRODUCTS)
