@@ -61,7 +61,8 @@ def create_sellers(count:int =10) -> list[SellerProfile]:
         seller = SellerProfile.objects.create(
             user=user,
             shop_name=fake.company(),
-            nip=fake.nip()
+            tin = fake.random_number(digits=10, fix_len=True)
+
         )
         sellers.append(seller)
     return sellers

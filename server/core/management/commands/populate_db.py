@@ -3,6 +3,7 @@ from django.db import transaction
 
 from accounts.utils import  create_sellers, create_buyers_with_shipping_address, create_reviews
 from products.utils import create_products, create_categories
+from orders.utils import populate_orders
 
 class Command(BaseCommand):
     help = "Populates the entire database with test data"
@@ -27,6 +28,9 @@ class Command(BaseCommand):
 
                 self.stdout.write("Generating reviews ...")
                 create_reviews(amount)
+
+                self.stdout.write("Generating orders ...")
+                populate_orders()
 
 
 

@@ -18,7 +18,7 @@ class BuyerProfile(models.Model):
 class SellerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="seller_profile")
     shop_name = models.CharField(max_length=100)
-    nip = models.CharField(max_length=10, unique=True)
+    tin = models.CharField(max_length=10, unique=True)
 
     def __str__(self):
         return f"{self.user.username}"

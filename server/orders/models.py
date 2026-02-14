@@ -2,9 +2,7 @@ from django.db import models
 from accounts.models import ShippingAddress, SellerProfile, BuyerProfile
 from products.models import Product
 
-class Shipment(models.Model):
-
-    SHIPPING_STATUS_CHOICES = {
+SHIPPING_STATUS_CHOICES = {
         "NOT_SENT": "NOT_SENT",
         "SHIPPED": "Shipped",
         "IN_TRANSIT": "In Transit",
@@ -17,6 +15,8 @@ class Shipment(models.Model):
         "RETURNED_TO_SENDER": "Returned to sender"
     }
 
+class Shipment(models.Model):
+
     sender = models.ForeignKey(SellerProfile, on_delete=models.CASCADE, related_name="shipments")
     shipping_status = models.CharField(max_length=30, default="NOT_SENT", choices=SHIPPING_STATUS_CHOICES)
     tracking_number = models.CharField(max_length=50, unique=True, blank=True, null=True)
@@ -27,15 +27,16 @@ class Shipment(models.Model):
     def __str__(self):
         return f"Shipment: {self.tracking_number or f'#{self.id} (No tracking)'}"
 
-class Order(models.Model):
 
-    ORDER_STATUS_CHOICES = {
+ORDER_STATUS_CHOICES = {
         "ORDER_PLACED": "Order placed",
         "PAYMENT_RECEIVED": "Payment received",
         "PREPARING_FOR_SHIPMENT": "Preparing for shipment",
         "SENT": "Sent",
         "ORDER_COMPLETED": "Order completed"
     }
+
+class Order(models.Model):
 
     buyer = models.ForeignKey(BuyerProfile, on_delete=models.CASCADE, related_name="orders")
     shipping_address = models.ForeignKey(ShippingAddress, on_delete=models.SET_NULL, null=True, related_name="orders")
@@ -52,7 +53,7 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     price = models.DecimalField(decimal_places=2, max_digits=10)
     quantity = models.PositiveIntegerField()
-    item = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, related_name="order_items")
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, related_name="order_items")
 
     def __str__(self):
         return f"Item: {self.id} from order: {self.order.id}"
