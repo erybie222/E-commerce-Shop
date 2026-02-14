@@ -2,7 +2,9 @@ from django.db import models
 from accounts.models import ShippingAddress, SellerProfile, BuyerProfile
 from products.models import Product
 
-SHIPPING_STATUS_CHOICES = {
+class Shipment(models.Model):
+
+    SHIPPING_STATUS_CHOICES = {
         "NOT_SENT": "NOT_SENT",
         "SHIPPED": "Shipped",
         "IN_TRANSIT": "In Transit",
@@ -15,7 +17,6 @@ SHIPPING_STATUS_CHOICES = {
         "RETURNED_TO_SENDER": "Returned to sender"
     }
 
-class Shipment(models.Model):
 
     sender = models.ForeignKey(SellerProfile, on_delete=models.CASCADE, related_name="shipments")
     shipping_status = models.CharField(max_length=30, default="NOT_SENT", choices=SHIPPING_STATUS_CHOICES)
@@ -28,7 +29,9 @@ class Shipment(models.Model):
         return f"Shipment: {self.tracking_number or f'#{self.id} (No tracking)'}"
 
 
-ORDER_STATUS_CHOICES = {
+class Order(models.Model):
+
+    ORDER_STATUS_CHOICES = {
         "ORDER_PLACED": "Order placed",
         "PAYMENT_RECEIVED": "Payment received",
         "PREPARING_FOR_SHIPMENT": "Preparing for shipment",
@@ -36,7 +39,6 @@ ORDER_STATUS_CHOICES = {
         "ORDER_COMPLETED": "Order completed"
     }
 
-class Order(models.Model):
 
     buyer = models.ForeignKey(BuyerProfile, on_delete=models.CASCADE, related_name="orders")
     shipping_address = models.ForeignKey(ShippingAddress, on_delete=models.SET_NULL, null=True, related_name="orders")

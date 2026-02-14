@@ -4,7 +4,7 @@ from faker import Faker
 from django.db import transaction
 from accounts.models import SellerProfile, BuyerProfile, ShippingAddress
 from products.models import Product
-from orders.models import Shipment, Order, OrderItem, ORDER_STATUS_CHOICES, SHIPPING_STATUS_CHOICES
+from orders.models import Shipment, Order, OrderItem
 
 fake = Faker()
 

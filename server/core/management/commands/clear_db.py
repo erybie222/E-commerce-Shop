@@ -32,6 +32,8 @@ class Command(BaseCommand):
                 self.stdout.write(f"Deleted {deleted_categories} categories and {deleted_products} products !")
 
 
+
+
                 self.stdout.write(self.style.SUCCESS("Success ! Data base has been cleared."))
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"Error: {e}"))

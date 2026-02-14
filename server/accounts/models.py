@@ -56,11 +56,7 @@ class ShippingAddress(models.Model):
                     'city': f"City '{self.city}' is not in the region: '{self.region}'."
                 })
 
-        # if self.country.code2 == 'PL':
-        #     if not re.match(r'^\d{2}-\d{3}$', self.zip_code):
-        #         raise ValidationError({
-        #             'zip_code': "Polish zip code has format XX-XXX."
-        #         })
+
 
     def save(self, *args, **kwargs):
         if self.country:
