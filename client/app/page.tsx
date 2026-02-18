@@ -1,6 +1,7 @@
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { HeroSection } from "@/components/features/home/HeroSection";
+import { CategoriesSection } from "@/components/features/home/CategoriesSection";
 export default function Home() {
   return (
     <div className="min-h-screen">
@@ -11,6 +12,7 @@ export default function Home() {
           Startujemy z Marketplace! 🚀
         </h1>
       </main> */}
+      <CategoriesSection />
       <Footer />
     </div>
   );

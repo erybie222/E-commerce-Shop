@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -8,8 +7,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Search, ShoppingCart, User, ChevronDown } from "lucide-react";
+import { Category } from "@/src/types";
+import { SearchArea } from "./SearchArea";
 
-export function Header() {
+async function getCategories(): Promise<Category[]> {
+  const res = await fetch("http://127.0.0.1:8000/api/categories/", {
+    next: { revalidate: 60 },
+  });
+  if (!res.ok) {
+    throw new Error("Failed to fetch categories");
+  }
+  return res.json();
+}
+
+export async function Header() {
+  const categories = await getCategories();
   return (
     <header className="bg-slate-800 text-white border-b border-slate-700">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-8">
@@ -20,48 +32,8 @@ export function Header() {
 
         {/* Search Section */}
         <div className="flex-1 flex items-center max-w-3xl">
-          <div className="flex w-full h-12 rounded-lg overflow-hidden border border-slate-600 bg-slate-700">
-            {/* Category Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="h-full px-4 text-base text-slate-200 hover:bg-slate-600 rounded-none"
-                >
-                  All
-                  <ChevronDown className="w-5 h-5 ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="start"
-                className="w-56 bg-slate-700 text-white"
-              >
-                <DropdownMenuItem>Electronics</DropdownMenuItem>
-                <DropdownMenuItem>Clothing</DropdownMenuItem>
-                <DropdownMenuItem>Books</DropdownMenuItem>
-                <DropdownMenuItem>Home & Garden</DropdownMenuItem>
-                <DropdownMenuItem>Sports</DropdownMenuItem>
-                <DropdownMenuItem>Toys & Games</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Search Input */}
-            <Input
-              type="search"
-              placeholder="Search for products..."
-              className="flex-1 h-full bg-transparent text-white border-0 placeholder:text-gray-400 rounded-none px-4"
-            />
-
-            {/* Search Button */}
-            <Button
-              size="icon"
-              className="h-full w-14 bg-yellow-400 hover:bg-yellow-500 text-slate-900 rounded-none"
-            >
-              <Search className="w-5 h-5" />
-            </Button>
-          </div>
+          <SearchArea categories={categories} />
         </div>
-
         {/* Right Section */}
         <div className="flex items-center gap-4">
           {/* Account Dropdown */}
