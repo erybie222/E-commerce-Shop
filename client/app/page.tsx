@@ -1,3 +1,4 @@
+import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 export default function Home() {
   return (
@@ -8,6 +9,7 @@ export default function Home() {
           Startujemy z Marketplace! 🚀
         </h1>
       </main>
+      <Footer />
     </div>
   );
 }
