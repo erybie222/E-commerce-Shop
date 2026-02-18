@@ -9,6 +9,7 @@ class CategorySerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
 class ProductSerializer(serializers.ModelSerializer):
+    seller_name = serializers.CharField(source='seller.shop_name', read_only=True)
     class Meta:
         model = Product
         fields = "__all__"
