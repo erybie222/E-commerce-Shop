@@ -1,1 +1,1 @@
-![img.png](entity-relationship_diagram.png)
+![img.png](entity-relationship-diagram.png)
