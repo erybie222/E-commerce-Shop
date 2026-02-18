@@ -13,9 +13,8 @@ import { useState } from "react";
 
 export function SearchArea({ categories }: { categories: Category[] }) {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
-
   return (
-    <div className="flex w-full h-12 rounded-lg overflow-hidden border border-slate-600 bg-slate-700">
+    <div className="flex w-full h-12 rounded-lg overflow-hidden border border-slate-600 bg-slate-700 border-2 focus-within:border-yellow-400">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -28,7 +27,7 @@ export function SearchArea({ categories }: { categories: Category[] }) {
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="start"
-          className="w-56 bg-slate-700 text-white"
+          className="w-56 bg-slate-700 text-white rounded-md border-yellow-400 border-1"
         >
           <DropdownMenuItem onClick={() => setSelectedCategory("All")}>
             All
@@ -47,9 +46,8 @@ export function SearchArea({ categories }: { categories: Category[] }) {
       <Input
         type="search"
         placeholder="Search for products..."
-        className="flex-1 h-full bg-transparent text-white border-0 placeholder:text-gray-400 rounded-none px-4"
+        className="flex-1 h-full bg-transparent text-white border-0 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-400 rounded-none px-4"
       />
-
       <Button
         size="icon"
         className="h-full w-14 bg-yellow-400 hover:bg-yellow-500 text-slate-900 rounded-none"
