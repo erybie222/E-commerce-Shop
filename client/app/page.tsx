@@ -2,7 +2,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { HeroSection } from "@/components/features/home/HeroSection";
 import { CategoriesSection } from "@/components/features/home/CategoriesSection";
-import { ProductGrid } from "@/components/layout/ProductGrid";
+import { ProductGrid } from "@/components/features/home/ProductGrid";
 import { Product } from "@/src/types";
 
 async function getProducts(): Promise<Product[]> {

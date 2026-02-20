@@ -1,5 +1,5 @@
 import { Product } from "@/src/types";
-import { ProductCard } from "./ProductCard";
+import { ProductCard } from "../../layout/ProductCard";
 
 interface ProductGridProps {
   title: string;

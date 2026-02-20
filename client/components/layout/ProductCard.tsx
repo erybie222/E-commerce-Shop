@@ -12,11 +12,13 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Card className="overflow-hidden bg-slate-800 border-slate-700 hover:border-slate-600 transition-colors">
       <div className="relative aspect-square overflow-hidden bg-slate-700">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="h-full w-full object-cover"
-        />
+        <a href={`/products/${product.slug}`} className="absolute inset-0 z-10">
+          <img
+            src={product.image}
+            alt={product.name}
+            className="h-full w-full object-cover"
+          />
+        </a>
       </div>
       <CardContent className="p-4 space-y-2">
         <h3 className="text-white font-medium text-base line-clamp-2 min-h-[3rem]">

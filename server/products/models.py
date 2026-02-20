@@ -7,7 +7,12 @@ class Category(models.Model):
                                         blank=True, null=True, related_name='subcategories')
     display = models.CharField(max_length=30)
     description = models.TextField()
+    
 
+    def save(self, *args , **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         if self.parent_category:
@@ -16,6 +21,7 @@ class Category(models.Model):
     class Meta:
         ordering = ["name"]
         verbose_name_plural = "Categories"
+    
 
 def get_uncategorized() -> Category:
     uncategorized_obj = Category.objects.get_or_create(name="uncategorized",
@@ -35,6 +41,22 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     category = models.ForeignKey(Category, default=get_uncategorized ,on_delete=models.SET(get_uncategorized),)
     seller = models.ForeignKey('accounts.SellerProfile', on_delete=models.CASCADE, related_name="products")
+
+    @property
+    def is_in_stock(self):
+        return self.stock > 0
+    
+    @property
+    def average_rating(self):
+        reviews = self.reviews.all()
+        if reviews.exists():
+            return reviews.aggregate(models.Avg('rating'))['rating__avg']
+        return None
+
+    def save(self, *args , **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.name}"

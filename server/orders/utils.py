@@ -62,6 +62,7 @@ def populate_orders(count: int = 10):
 
                 shipment = Shipment.objects.create(
                     sender=seller,
+                    order=order,
                     shipping_status=random.choice(shipment_status_keys),
                     tracking_number=fake.unique.bothify(text='INPOST-########'),
                     estimated_delivery=fake.future_date(),
