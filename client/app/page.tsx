@@ -20,7 +20,11 @@ export default async function Home() {
   return (
     <div className="min-h-screen">
       <Header />
-      <HeroSection />
+      <HeroSection
+        imgSrc="hero-dzik.jpg"
+        title="Discover Amazing Products"
+        description="Find everything you need from verified sellers"
+      />
       <CategoriesSection />
       <ProductGrid title="Trending Products" products={products} />
       <Footer />

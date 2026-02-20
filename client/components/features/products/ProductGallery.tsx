@@ -24,7 +24,7 @@ export function ProductGallery({ images, alt }: ProductGalleryProps) {
   const activeImage = galleryImages[activeIndex] ?? galleryImages[0];
 
   return (
-    <section className="w-full max-w-[520px]">
+    <section className="w-full">
       <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-3 shadow-2xl">
         <div className="relative aspect-square overflow-hidden rounded-xl border border-slate-800 bg-slate-950">
           <img

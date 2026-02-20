@@ -74,7 +74,7 @@ export default async function ProductPage({
     <>
       <Header />
       <div className="min-h-screen bg-slate-950 text-white">
-        <div className="container mx-auto grid gap-10 px-4 py-12 lg:grid-cols-[minmax(0,520px)_minmax(0,1fr)]">
+        <div className="container mx-auto grid gap-10 px-4 py-12 lg:grid-cols-2">
           <ProductGallery images={fallbackImages} alt="Product image" />
           <div className="flex flex-col gap-6">
             <ProductTitle

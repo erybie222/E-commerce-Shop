@@ -26,9 +26,11 @@ export async function Header() {
     <header className="bg-slate-800 text-white border-b border-slate-700">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-8">
         {/* Logo */}
-        <div className="flex-shrink-0">
-          <h1 className="text-3xl font-bold text-yellow-400">MarketPlace</h1>
-        </div>
+        <a href="/">
+          <div className="flex-shrink-0">
+            <h1 className="text-3xl font-bold text-yellow-400">MarketPlace</h1>
+          </div>
+        </a>
 
         {/* Search Section */}
         <div className="flex-1 flex items-center max-w-3xl">
@@ -61,19 +63,21 @@ export async function Header() {
           </DropdownMenu>
 
           {/* Cart Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-white hover:bg-slate-700 relative h-11 w-11"
-          >
-            <ShoppingCart className="w-6 h-6" />
-            <Badge
-              className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full"
-              variant="default"
+          <a href="/cart">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white hover:bg-slate-700 relative h-11 w-11"
             >
-              3
-            </Badge>
-          </Button>
+              <ShoppingCart className="w-6 h-6" />
+              <Badge
+                className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full"
+                variant="default"
+              >
+                3
+              </Badge>
+            </Button>
+          </a>
 
           {/* Become a Seller Button */}
           <Button className="bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-semibold h-11 px-5 text-base">
