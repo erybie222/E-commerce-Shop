@@ -21,9 +21,11 @@ async function getProductById(product_id: number): Promise<Product> {
 function CartProductItem({
   orderItem,
   onRemove,
+  onQuantityChange,
 }: {
   orderItem: OrderItem;
   onRemove: (productId: number) => void;
+  onQuantityChange: (productId: number, quantity: number) => void;
 }) {
   const [product, setProduct] = useState<Product | null>(null);
 
@@ -52,10 +54,11 @@ function CartProductItem({
       key={product.id}
       title={product.name}
       sellerName={product.seller_name}
-      price={Number(orderItem.price) * Number(orderItem.quantity)}
+      price={Number(orderItem.price)}
       currencySymbol="$"
       initialQuantity={orderItem.quantity || 1}
       onRemove={() => onRemove(product.id)}
+      onQuantityChange={(quantity) => onQuantityChange(product.id, quantity)}
     />
   );
 }
@@ -78,6 +81,24 @@ export function CartClient() {
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
+  let subtotal = 0;
+  cart.forEach((orderItem: OrderItem) => {
+    subtotal += Number(orderItem.price) * Number(orderItem.quantity);
+  });
+  const tax = subtotal * 0.23;
+  const total = subtotal + tax;
+
+  const handleQuantityChange = (productId: number, quantity: number) => {
+    const updatedCart = cart.map((orderItem: OrderItem) => {
+      if (orderItem.product_id === productId) {
+        return { ...orderItem, quantity };
+      }
+      return orderItem;
+    });
+    setCart(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  };
+
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       <div className="container mx-auto px-4 py-10">
@@ -93,17 +114,18 @@ export function CartClient() {
                   key={orderItem.product_id}
                   orderItem={orderItem}
                   onRemove={removeFromCart}
+                  onQuantityChange={handleQuantityChange}
                 />
               ))
             )}
           </section>
 
           <OrderSummaryCard
-            subtotal={879.96}
-            itemsCount={3}
+            subtotal={subtotal}
+            itemsCount={cart.length}
             shippingLabel="FREE"
-            tax={88}
-            total={967.96}
+            tax={tax}
+            total={total}
             currencySymbol="$"
           />
         </div>
