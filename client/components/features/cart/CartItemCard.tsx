@@ -4,10 +4,10 @@ import { useState } from "react";
 import { Trash2 } from "lucide-react";
 
 interface CartItemCardProps {
-  image: string;
+  image?: string;
   title: string;
   sellerName: string;
-  color: string;
+  color?: string;
   price: number;
   currencySymbol: string;
   initialQuantity: number;
@@ -17,10 +17,10 @@ interface CartItemCardProps {
 }
 
 export function CartItemCard({
-  image,
+  image = "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80",
   title,
   sellerName,
-  color,
+  color = "Black",
   price,
   currencySymbol,
   initialQuantity,
@@ -109,7 +109,7 @@ export function CartItemCard({
 
           <p className="text-5xl font-semibold text-white">
             {currencySymbol}
-            {price.toFixed(2)}
+            {price}
           </p>
         </div>
       </div>

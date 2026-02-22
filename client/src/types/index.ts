@@ -20,6 +20,14 @@ export interface Product {
     created_at:Date;
     category_id: number;
     seller_id: number;
+    quantity?: number;
+}
+
+export interface OrderItem {
+  id: number;
+  product_id: number;
+  quantity: number;
+  price: number;
 }
 
 export interface Review {

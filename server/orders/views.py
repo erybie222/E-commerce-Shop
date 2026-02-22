@@ -49,3 +49,4 @@ class OrderViewSet(viewsets.ModelViewSet):
             raise PermissionDenied("Only buyers can place an order.")
         else:
             serializer.save(buyer=user.buyer_profile)
+
