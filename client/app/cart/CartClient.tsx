@@ -2,6 +2,7 @@
 
 import { CartItemCard } from "@/components/features/cart/CartItemCard";
 import { OrderSummaryCard } from "@/components/features/cart/OrderSummaryCard";
+import { useCartStore } from "@/src/store/useCartStore";
 import { OrderItem, Product } from "@/src/types";
 import { useEffect, useState } from "react";
 
@@ -64,52 +65,30 @@ function CartProductItem({
 }
 
 export function CartClient() {
-  const [cart, setCart] = useState<OrderItem[]>([]);
+  const cartItems = useCartStore((state) => state.items);
 
-  useEffect(() => {
-    if (localStorage.getItem("cart")) {
-      const fetchedCart = JSON.parse(localStorage.getItem("cart") || "[]");
-      setCart(fetchedCart);
-    }
-  }, []);
-
-  const removeFromCart = (productId: number) => {
-    const updatedCart = cart.filter(
-      (orderItem: OrderItem) => orderItem.product_id !== productId,
-    );
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-  };
+  const removeFromCart = useCartStore((state) => state.removeFromCart);
 
   let subtotal = 0;
-  cart.forEach((orderItem: OrderItem) => {
+  cartItems.forEach((orderItem: OrderItem) => {
     subtotal += Number(orderItem.price) * Number(orderItem.quantity);
   });
   const tax = subtotal * 0.23;
   const total = subtotal + tax;
 
-  const handleQuantityChange = (productId: number, quantity: number) => {
-    const updatedCart = cart.map((orderItem: OrderItem) => {
-      if (orderItem.product_id === productId) {
-        return { ...orderItem, quantity };
-      }
-      return orderItem;
-    });
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-  };
+  const handleQuantityChange = useCartStore((state) => state.changeQuantity);
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       <div className="container mx-auto px-4 py-10">
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">
           <section className="space-y-5">
-            {cart.length === 0 ? (
+            {cartItems.length === 0 ? (
               <p className="text-center text-2xl text-slate-400">
                 Your cart is empty.
               </p>
             ) : (
-              cart.map((orderItem: OrderItem) => (
+              cartItems.map((orderItem: OrderItem) => (
                 <CartProductItem
                   key={orderItem.product_id}
                   orderItem={orderItem}
@@ -124,7 +103,7 @@ export function CartClient() {
 
           <OrderSummaryCard
             subtotal={subtotal}
-            itemsCount={cart.length}
+            itemsCount={cartItems.length}
             shippingLabel="FREE"
             tax={tax}
             total={total}

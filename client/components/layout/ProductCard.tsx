@@ -4,39 +4,14 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart, Star } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { useState } from "react";
+import { useCartStore } from "@/src/store/useCartStore";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const addToCart = (product: Product) => {
-    const exsistingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-    if (
-      exsistingCart.some(
-        (orderItem: OrderItem) => orderItem.product_id === product.id,
-      )
-    ) {
-      exsistingCart.forEach((orderItem: OrderItem) => {
-        if (orderItem.product_id === product.id) {
-          orderItem.quantity = (orderItem.quantity || 1) + 1;
-        }
-      });
-      localStorage.setItem("cart", JSON.stringify(exsistingCart));
-      console.log("Cart:", exsistingCart);
-      return;
-    }
-    const updaTedCart = [
-      ...exsistingCart,
-      {
-        product_id: product.id,
-        quantity: 1,
-        price: Number(product.price) || 0,
-      },
-    ];
-    localStorage.setItem("cart", JSON.stringify(updaTedCart));
-    console.log("Cart:", updaTedCart);
-  };
+  const addToCart = useCartStore((state) => state.addToCart);
 
   return (
     <Card className="overflow-hidden bg-slate-800 border-slate-700 hover:border-slate-600 transition-colors">

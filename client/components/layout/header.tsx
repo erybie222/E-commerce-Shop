@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Search, ShoppingCart, User, ChevronDown } from "lucide-react";
+import { User, ChevronDown } from "lucide-react";
 import { Category } from "@/src/types";
 import { SearchArea } from "./SearchArea";
+import { CartBadge } from "./cartBadge";
 
 async function getCategories(): Promise<Category[]> {
   const res = await fetch("http://127.0.0.1:8000/api/categories/", {
@@ -62,22 +62,8 @@ export async function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Cart Button */}
-          <a href="/cart">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white hover:bg-slate-700 relative h-11 w-11"
-            >
-              <ShoppingCart className="w-6 h-6" />
-              <Badge
-                className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full"
-                variant="default"
-              >
-                3
-              </Badge>
-            </Button>
-          </a>
+          {/* Cart Badge */}
+          <CartBadge />
 
           {/* Become a Seller Button */}
           <Button className="bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-semibold h-11 px-5 text-base">
