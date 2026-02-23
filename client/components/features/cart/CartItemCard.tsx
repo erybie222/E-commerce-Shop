@@ -29,26 +29,22 @@ export function CartItemCard({
   onQuantityChange,
 }: CartItemCardProps) {
   const [quantity, setQuantity] = useState(Math.max(1, initialQuantity));
-  const [totalPrice, setPrice] = useState(price * quantity);
+  const totalPrice = price * quantity;
 
   const decrease = () => {
-    setQuantity((prev) => {
-      const next = Math.max(1, prev - 1);
-      if (next !== prev) {
-        onQuantityChange?.(next);
-        setPrice(next * price);
-      }
-      return next;
-    });
+    if (quantity <= 1) {
+      return;
+    }
+
+    const next = quantity - 1;
+    setQuantity(next);
+    onQuantityChange?.(next);
   };
 
   const increase = () => {
-    setQuantity((prev) => {
-      const next = prev + 1;
-      onQuantityChange?.(next);
-      setPrice(next * price);
-      return next;
-    });
+    const next = quantity + 1;
+    setQuantity(next);
+    onQuantityChange?.(next);
   };
 
   return (

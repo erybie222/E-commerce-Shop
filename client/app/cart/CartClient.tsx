@@ -114,7 +114,9 @@ export function CartClient() {
                   key={orderItem.product_id}
                   orderItem={orderItem}
                   onRemove={removeFromCart}
-                  onQuantityChange={handleQuantityChange}
+                  onQuantityChange={(productId, quantity) =>
+                    handleQuantityChange(productId, quantity)
+                  }
                 />
               ))
             )}
