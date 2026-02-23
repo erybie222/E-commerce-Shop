@@ -1,13 +1,8 @@
-import { ProductGallery } from "@/components/features/products/ProductGallery";
-import { ProductDescription } from "@/components/features/products/ProductDescription";
-import { ProductReviewsList } from "@/components/features/products/ProductReviewsList";
-import { ProductSellerCard } from "@/components/features/products/ProductSellerCard";
-import { ProductTitle } from "@/components/features/products/ProductTitle";
-import { ProductVariantActions } from "@/components/features/products/ProductVariantActions";
 import { Product } from "@/src/types";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { ProductPageClient } from "@/components/features/products/ProductPageClient";
 
 async function getProductBySlug(slug: string): Promise<Product | null> {
   const res = await fetch(
@@ -73,34 +68,11 @@ export default async function ProductPage({
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-slate-950 text-white">
-        <div className="container mx-auto grid gap-10 px-4 py-12 lg:grid-cols-2">
-          <ProductGallery images={fallbackImages} alt="Product image" />
-          <div className="flex flex-col gap-6">
-            <ProductTitle
-              title={product.name}
-              rating={product.rating}
-              reviewsCount={demoReviews.length}
-              price={product.price}
-              currencySymbol="$"
-              inStock={product.is_in_stock}
-              stockLabel="In Stock"
-            />
-            <ProductSellerCard sellerName={product.seller_name} />
-
-            <ProductVariantActions disabled={!product.is_in_stock} />
-            <ProductDescription description={product.description} />
-          </div>
-        </div>
-
-        <div className="container mx-auto px-4 pb-12">
-          <ProductReviewsList
-            reviews={demoReviews}
-            averageRating={product.rating}
-            totalReviews={demoReviews.length}
-          />
-        </div>
-      </div>
+      <ProductPageClient
+        product={product}
+        fallbackImages={fallbackImages}
+        demoReviews={demoReviews}
+      />
       <Footer />
     </>
   );

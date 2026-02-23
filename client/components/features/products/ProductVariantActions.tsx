@@ -2,12 +2,16 @@
 
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useCartStore } from "@/src/store/useCartStore";
+import { Product } from "@/src/types";
 
 interface ProductVariantActionsProps {
   colors?: string[];
   sizes?: string[];
   disabled?: boolean;
   className?: string;
+  addToCart: (product: Product) => void;
+  product: Product;
 }
 
 export function ProductVariantActions({
@@ -15,6 +19,8 @@ export function ProductVariantActions({
   sizes,
   disabled = false,
   className,
+  addToCart,
+  product,
 }: ProductVariantActionsProps) {
   const colorOptions = useMemo(() => {
     const filtered = (colors ?? []).filter(Boolean);
@@ -88,6 +94,9 @@ export function ProductVariantActions({
           type="button"
           disabled={disabled}
           className="h-12 rounded-lg bg-yellow-400 text-slate-950 hover:bg-yellow-300"
+          onClick={() => {
+            addToCart(product);
+          }}
         >
           Add to Cart
         </Button>
