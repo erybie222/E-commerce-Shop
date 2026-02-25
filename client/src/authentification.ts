@@ -107,5 +107,6 @@ export async function loginAction(formData: FormData): Promise<void> {
   }
 
   await setAuthCookies(data.access, data.refresh);
+  
   redirect("/");
 }

@@ -7,12 +7,10 @@ import { OrderItem, Product } from "@/src/types";
 import { useEffect, useState } from "react";
 
 async function getProductById(product_id: number): Promise<Product> {
-  const res = await fetch(
-    `http://127.0.0.1:8000/api/products_by_id/${product_id}/`,
-    {
-      next: { revalidate: 60 },
-    },
-  );
+  const API_BASE_URL = process.env.API_BASE_URL;
+  const res = await fetch(`${API_BASE_URL}/products_by_id/${product_id}/`, {
+    next: { revalidate: 60 },
+  });
   if (!res.ok) {
     throw new Error("Failed to fetch products");
   }

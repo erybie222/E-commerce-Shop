@@ -6,7 +6,8 @@ import { ProductGrid } from "@/components/features/home/ProductGrid";
 import { Category, Product } from "@/src/types";
 
 async function getProducts(): Promise<Product[]> {
-  const res = await fetch("http://127.0.0.1:8000/api/products/", {
+  const API_BASE_URL = process.env.API_BASE_URL;
+  const res = await fetch(`${API_BASE_URL}/products/`, {
     next: { revalidate: 60 },
   });
   if (!res.ok) {
@@ -16,7 +17,8 @@ async function getProducts(): Promise<Product[]> {
 }
 
 async function getCategories(): Promise<Category[]> {
-  const res = await fetch("http://127.0.0.1:8000/api/categories/", {
+  const API_BASE_URL = process.env.API_BASE_URL;
+  const res = await fetch(`${API_BASE_URL}/categories/`, {
     next: { revalidate: 60 },
   });
   if (!res.ok) {

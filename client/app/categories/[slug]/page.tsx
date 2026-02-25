@@ -4,10 +4,10 @@ import { Header } from "@/components/layout/Header";
 import { Product } from "@/src/types";
 
 async function fetchCategoryProducts(slug: string): Promise<Product[]> {
-  const res = await fetch(
-    `http://127.0.0.1:8000/api/products/?category__slug=${slug}`,
-    { next: { revalidate: 60 } },
-  );
+  const API_BASE_URL = process.env.API_BASE_URL;
+  const res = await fetch(`${API_BASE_URL}/products/?category__slug=${slug}`, {
+    next: { revalidate: 60 },
+  });
 
   if (!res.ok) {
     throw new Error("Failed to fetch products for category: " + slug);

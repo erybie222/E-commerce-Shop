@@ -5,8 +5,9 @@ import { Footer } from "@/components/layout/Footer";
 import { ProductPageClient } from "@/components/features/products/ProductPageClient";
 
 async function getProductBySlug(slug: string): Promise<Product | null> {
+  const API_BASE_URL = process.env.API_BASE_URL;
   const res = await fetch(
-    `http://localhost:8000/api/products/${encodeURIComponent(slug)}`,
+    `${API_BASE_URL}/products/${encodeURIComponent(slug)}`,
     { cache: "no-store" },
   );
 
