@@ -87,9 +87,11 @@ export async function Header() {
           <CartBadge />
 
           {/* Become a Seller Button */}
-          <Button className="bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-semibold h-11 px-5 text-base">
-            Become a Seller
-          </Button>
+          <a href="/become-seller">
+            <Button className="bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-semibold h-11 px-5 text-base">
+              Become a Seller
+            </Button>
+          </a>
         </div>
       </div>
     </header>

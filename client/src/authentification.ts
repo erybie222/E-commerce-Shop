@@ -77,6 +77,61 @@ export async function registerAction(formData: FormData): Promise<void> {
   redirect("/");
 }
 
+export async function registerSellerAction(formData: FormData): Promise<void> {
+  const API_BASE_URL = process.env.API_BASE_URL;
+  const validatedFields = RegisterFormSchema.safeParse({
+    username: formData.get("username"),
+    email: formData.get("email"),
+    password: formData.get("password"),
+    confirm_password: formData.get("confirm_password"),
+    first_name: formData.get("first_name"),
+    last_name: formData.get("last_name"),
+    shop_name: formData.get("shop_name"),
+    tin_number: formData.get("tin_number"),
+  });
+
+  if (!validatedFields.success) {
+    return;
+  }
+
+  const response = await fetch(`${API_BASE_URL}/register-seller/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(validatedFields.data),
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    return;
+  }
+
+  const loginAfterRegisterSellerResponse = await fetch(`${API_BASE_URL}/login/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      username: validatedFields.data.username,
+      password: validatedFields.data.password,
+    }),
+    cache: "no-store",
+  });
+
+  if (!loginAfterRegisterSellerResponse.ok) {
+    return;
+  }
+
+  const tokens = await loginAfterRegisterSellerResponse.json();
+  if (!tokens?.access || !tokens?.refresh) {
+    return;
+  }
+
+  await setAuthCookies(tokens.access, tokens.refresh);
+  redirect("/");
+}
+
 export async function loginAction(formData: FormData): Promise<void> {
   const API_BASE_URL = process.env.API_BASE_URL;
 

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from accounts.models import ShippingAddress, Review
+from accounts.models import BuyerProfile, SellerProfile, ShippingAddress, Review
 from django.contrib.auth.models import User
 
 class ShippingAddressSerializer(serializers.ModelSerializer):
@@ -28,3 +28,21 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+
+class RegisterSellerSerializer(RegisterSerializer):
+    shop_name = serializers.CharField(max_length=100)
+    tin = serializers.CharField(max_length=10)
+
+    def create(self, validated_data):
+        user = super().create(validated_data)
+        shop_name = validated_data['shop_name']
+        tin = validated_data['tin']
+        SellerProfile.objects.create(user=user, shop_name=shop_name, tin=tin)
+        return user
+
+class RegisterBuyerSerializer(RegisterSerializer):
+    def create(self, validated_data):
+        user = super().create(validated_data)
+        BuyerProfile.objects.create(user=user)
+        return user
+

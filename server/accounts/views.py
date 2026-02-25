@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, generics
 from accounts.models import ShippingAddress, Review
 from orders.models import OrderItem
-from accounts.serializers import RegisterSerializer, ShippingAddressSerializer, ReviewSerializer
+from accounts.serializers import RegisterBuyerSerializer, RegisterSellerSerializer, ShippingAddressSerializer, ReviewSerializer
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny
 from django.contrib.auth.models import User
@@ -43,7 +43,14 @@ class ReviewViewSet(viewsets.ModelViewSet):
             raise PermissionDenied("You must have bought the product to review it.")
         serializer.save(buyer=user.buyer_profile)
 
-class RegisterView(generics.CreateAPIView):
+
+
+class RegisterSellerView(generics.CreateAPIView):
     queryset = User.objects.all()
-    serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
+    serializer_class = RegisterSellerSerializer
+
+class RegisterBuyerView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = [AllowAny]
+    serializer_class = RegisterBuyerSerializer
