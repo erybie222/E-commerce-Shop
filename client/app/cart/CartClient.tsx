@@ -7,13 +7,15 @@ import { OrderItem, Product } from "@/src/types";
 import { useEffect, useState } from "react";
 
 async function getProductById(product_id: number): Promise<Product> {
-  const API_BASE_URL = process.env.API_BASE_URL;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const res = await fetch(`${API_BASE_URL}/products_by_id/${product_id}/`, {
-    next: { revalidate: 60 },
+    cache: "no-store",
   });
+
   if (!res.ok) {
     throw new Error("Failed to fetch products");
   }
+
   return res.json();
 }
 

@@ -10,9 +10,11 @@ import { Category } from "@/src/types";
 import { SearchArea } from "./SearchArea";
 import { CartBadge } from "./cartBadge";
 import { cookies } from "next/headers";
+import { logoutAction } from "@/src/authentification";
 
 async function getCategories(): Promise<Category[]> {
-  const res = await fetch("http://127.0.0.1:8000/api/categories/", {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const res = await fetch(`${API_BASE_URL}/categories/`, {
     next: { revalidate: 60 },
   });
   if (!res.ok) {
@@ -64,7 +66,9 @@ export async function Header() {
                   <DropdownMenuItem>Orders</DropdownMenuItem>
                   <DropdownMenuItem>Wishlist</DropdownMenuItem>
                   <DropdownMenuItem>Settings</DropdownMenuItem>
-                  <DropdownMenuItem>Logout</DropdownMenuItem>
+                  <DropdownMenuItem onClick={logoutAction}>
+                    Logout
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </a>

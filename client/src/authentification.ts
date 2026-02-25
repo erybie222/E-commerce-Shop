@@ -110,3 +110,10 @@ export async function loginAction(formData: FormData): Promise<void> {
   
   redirect("/");
 }
+
+export async function logoutAction(): Promise<void> {
+  const cookieStore = await cookies();
+  await cookieStore.delete("access_token");
+  await cookieStore.delete("refresh_token");
+  redirect("/login");
+}
