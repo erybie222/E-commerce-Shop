@@ -33,6 +33,9 @@ class RegisterSellerSerializer(RegisterSerializer):
     shop_name = serializers.CharField(max_length=100)
     tin = serializers.CharField(max_length=10)
 
+    class Meta(RegisterSerializer.Meta):
+        fields = RegisterSerializer.Meta.fields + ['shop_name', 'tin']
+
     def create(self, validated_data):
         user = super().create(validated_data)
         shop_name = validated_data['shop_name']
@@ -41,6 +44,8 @@ class RegisterSellerSerializer(RegisterSerializer):
         return user
 
 class RegisterBuyerSerializer(RegisterSerializer):
+    class Meta(RegisterSerializer.Meta):
+        fields = RegisterSerializer.Meta.fields
     def create(self, validated_data):
         user = super().create(validated_data)
         BuyerProfile.objects.create(user=user)

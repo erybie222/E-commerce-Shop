@@ -15,6 +15,17 @@ async function fetchCategoryProducts(slug: string): Promise<Product[]> {
   return res.json();
 }
 
+async function fetchCategoryDetails(slug: string) {
+  const API_BASE_URL = process.env.API_BASE_URL;
+  const res = await fetch(`${API_BASE_URL}/categories/${slug}`, {
+    next: { revalidate: 60 },
+  });
+  if (!res.ok) {
+    throw new Error("Failed to fetch category details for category: " + slug);
+  }
+  return res.json();
+}
+
 export default async function CategoryPage({
   params,
 }: {
@@ -22,10 +33,11 @@ export default async function CategoryPage({
 }) {
   const { slug } = await params;
   const products = await fetchCategoryProducts(slug);
+  const categoryDetails = await fetchCategoryDetails(slug);
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <Header />
-      <ProductGrid title={slug} products={products} />
+      <ProductGrid title={categoryDetails.display} products={products} />
       <Footer />
     </div>
   );

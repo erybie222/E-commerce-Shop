@@ -62,17 +62,20 @@ export function OrderSummaryCard({
           {formatMoney(total, currencySymbol)}
         </span>
       </div>
-
       <div className="mt-6 space-y-3">
-        <Button className="h-12 w-full rounded-lg bg-yellow-400 text-slate-950 hover:bg-yellow-300">
-          Proceed to Checkout
-        </Button>
-        <Button
-          variant="outline"
-          className="h-12 w-full rounded-lg border-slate-700 bg-slate-950 text-white hover:bg-slate-900"
-        >
-          Continue Shopping
-        </Button>
+        <a href="/checkout">
+          <Button className="h-12 w-full rounded-lg bg-yellow-400 text-slate-950 hover:bg-yellow-300">
+            Proceed to Checkout
+          </Button>
+        </a>
+        <a href="/products">
+          <Button
+            variant="outline"
+            className="h-12 w-full rounded-lg border-slate-700 bg-slate-950 text-white hover:bg-slate-900"
+          >
+            Continue Shopping
+          </Button>
+        </a>
       </div>
     </aside>
   );
