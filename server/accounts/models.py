@@ -34,6 +34,10 @@ class ShippingAddress(models.Model):
     street_name = models.CharField(max_length=30)
     street_number = models.CharField(max_length=10)
     is_default = models.BooleanField(default=False)
+    place = models.CharField(max_length=100, choices=[
+        ('home', 'Home'),
+        ('work', 'Work'),
+        ('other', 'Other'),])
 
     def clean(self):
 

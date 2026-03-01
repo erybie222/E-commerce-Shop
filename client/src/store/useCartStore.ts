@@ -6,6 +6,10 @@ import { OrderItem, Product } from '../types';
 
 interface CartState {
   items: OrderItem[];
+  hasHydrated: boolean;
+  shippingCost: number;
+  shippingMethodId: number | null;
+  setHasHydrated: (value: boolean) => void;
   addToCart: (product: Product) => void;
   removeFromCart: (productId: number) => void;
   changeQuantity: (productId: number, quantity: number) => void;
@@ -16,6 +20,10 @@ export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
+      hasHydrated: false,
+      shippingCost: 0,
+      shippingMethodId: null,
+      setHasHydrated: (value) => set({ hasHydrated: value }),
 
       addToCart: (productToAdd) => {
         const currentItems = get().items;
@@ -52,6 +60,9 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: 'ecommerce-cart',
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     }
   )
 );

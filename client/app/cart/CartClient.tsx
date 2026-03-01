@@ -2,22 +2,10 @@
 
 import { CartItemCard } from "@/components/features/cart/CartItemCard";
 import { OrderSummaryCard } from "@/components/features/cart/OrderSummaryCard";
+import { getProductById } from "@/lib/api";
 import { useCartStore } from "@/src/store/useCartStore";
 import { OrderItem, Product } from "@/src/types";
 import { useEffect, useState } from "react";
-
-async function getProductById(product_id: number): Promise<Product> {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-  const res = await fetch(`${API_BASE_URL}/products_by_id/${product_id}/`, {
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch products");
-  }
-
-  return res.json();
-}
 
 function CartProductItem({
   orderItem,
