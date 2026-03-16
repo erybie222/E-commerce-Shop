@@ -3,7 +3,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import User
 from cities_light.models import Country, City, Region
-import re
 
 from products.models import Product
 
@@ -63,8 +62,14 @@ class ShippingAddress(models.Model):
 
 
     def save(self, *args, **kwargs):
-        if self.country:
-            self.phone_prefix = str(self.country.phone)
+        if self.country and getattr(self.country, 'phone', None):
+            normalized_phone = ''.join(ch for ch in str(self.country.phone) if ch.isdigit())
+            if normalized_phone:
+                self.phone_prefix = normalized_phone[:4]
+
+        if self.phone_prefix:
+            self.phone_prefix = str(self.phone_prefix)[:4]
+
         super().save(*args, **kwargs)
 
     def __str__(self):

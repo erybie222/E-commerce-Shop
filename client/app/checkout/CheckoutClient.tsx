@@ -6,9 +6,8 @@ import { CheckoutOrderSummary } from "@/components/features/checkout/CheckoutOrd
 import { useCartStore } from "@/src/store/useCartStore";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getShippingAddresses } from "@/lib/api";
+import { getShippingAddresses, saveShippingAddress } from "@/lib/api";
 import { ShippingAddress } from "@/src/types";
-import Cookies from "js-cookie";
 
 export default function CheckoutClient() {
   const router = useRouter();
@@ -23,13 +22,12 @@ export default function CheckoutClient() {
     let mounted = true;
 
     (async () => {
-      const access_token = Cookies.get("access_token");
-      if (!access_token) {
-        setShippingAddresses([]);
-        return;
+      try {
+        const data = await getShippingAddresses();
+        if (mounted) setShippingAddresses(data ?? []);
+      } catch {
+        if (mounted) setShippingAddresses([]);
       }
-      const data = await getShippingAddresses();
-      if (mounted) setShippingAddresses(data ?? []);
     })();
 
     return () => {
@@ -47,12 +45,19 @@ export default function CheckoutClient() {
     }
   }, [cartItems.length, hasHydrated, router]);
 
+  const handleSaveShippingAddress = async (formData: FormData) => {
+    await saveShippingAddress(formData);
+    const data = await getShippingAddresses();
+    setShippingAddresses(data ?? []);
+  };
+
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       <div className="container mx-auto px-4 py-10">
         <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
           <div className="space-y-6">
             <ShippingAddressSection
+              saveShippingAddress={handleSaveShippingAddress}
               listOfShippingAddresses={shippingAddresses}
             />
             <ShippingMethodSelector />

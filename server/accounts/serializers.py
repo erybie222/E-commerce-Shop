@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from accounts.models import BuyerProfile, SellerProfile, ShippingAddress, Review
 from django.contrib.auth.models import User
+from cities_light.models import Country, City, Region
+from django.db import transaction
 
 class ShippingAddressSerializer(serializers.ModelSerializer):
     class Meta:
@@ -46,8 +48,24 @@ class RegisterSellerSerializer(RegisterSerializer):
 class RegisterBuyerSerializer(RegisterSerializer):
     class Meta(RegisterSerializer.Meta):
         fields = RegisterSerializer.Meta.fields
+
+    @transaction.atomic
     def create(self, validated_data):
         user = super().create(validated_data)
         BuyerProfile.objects.create(user=user)
         return user
 
+class CountrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Country
+        fields = ['id', 'name']
+
+class CitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = City
+        fields = ['id', 'name']
+
+class RegionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Region
+        fields = ['id', 'name']

@@ -1,10 +1,11 @@
 from rest_framework import viewsets, permissions, generics
-from accounts.models import ShippingAddress, Review
+from accounts.models import BuyerProfile, ShippingAddress, Review
 from orders.models import OrderItem
-from accounts.serializers import RegisterBuyerSerializer, RegisterSellerSerializer, ShippingAddressSerializer, ReviewSerializer
+from accounts.serializers import CitySerializer, CountrySerializer, RegionSerializer, RegisterBuyerSerializer, RegisterSellerSerializer, ShippingAddressSerializer, ReviewSerializer
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny
 from django.contrib.auth.models import User
+from cities_light.models import Country, City, Region
 
 # Create your views here.
 
@@ -14,17 +15,19 @@ class ShippingAddressViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if hasattr(user, "buyer_profile"):
-            return ShippingAddress.objects.filter(buyer_profile=user.buyer_profile)
-        else:
+        if not user or not user.is_authenticated:
             return ShippingAddress.objects.none()
+
+        buyer_profile, _ = BuyerProfile.objects.get_or_create(user=user)
+        return ShippingAddress.objects.filter(buyer_profile=buyer_profile)
 
     def perform_create(self, serializer):
         user = self.request.user
-        if not hasattr(user, 'buyer_profile'):
-            raise PermissionDenied("You must have a Buyer Profile to add an address.")
+        if not user or not user.is_authenticated:
+            raise PermissionDenied("Authentication required.")
 
-        serializer.save(buyer_profile=user.buyer_profile)
+        buyer_profile, _ = BuyerProfile.objects.get_or_create(user=user)
+        serializer.save(buyer_profile=buyer_profile)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -54,3 +57,28 @@ class RegisterBuyerView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = [AllowAny]
     serializer_class = RegisterBuyerSerializer
+
+
+class CountryListView(generics.ListAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = CountrySerializer
+
+    def get_queryset(self):
+        return Country.objects.all()
+
+class RegionsListByCountryView(generics.ListAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = RegionSerializer
+
+    def get_queryset(self):
+        country_id = self.kwargs.get('country_id')
+        return Region.objects.filter(country=country_id)
+    
+class CitiesListByRegionView(generics.ListAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = CitySerializer
+
+    def get_queryset(self):
+        region_id = self.kwargs.get('region_id')
+        return City.objects.filter(region=region_id)
+    

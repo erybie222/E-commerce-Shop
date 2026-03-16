@@ -1,16 +1,124 @@
-import { MapPin } from "lucide-react";
+"use client";
 
+import { MapPin } from "lucide-react";
+import { useEffect, useState } from "react";
+
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { fetchCities, fetchCountries, fetchRegions } from "@/lib/api";
+import { LocationItem } from "@/src/types";
 
 type ShippingAddressFormProps = {
   withContainer?: boolean;
+  saveShippingAddress: (formData: FormData) => Promise<void>;
 };
 
 export function ShippingAddressForm({
   withContainer = true,
+  saveShippingAddress,
 }: ShippingAddressFormProps) {
+  const [countries, setCountries] = useState<LocationItem[]>([]);
+  const [regions, setRegions] = useState<LocationItem[]>([]);
+  const [cities, setCities] = useState<LocationItem[]>([]);
+
+  const [selectedCountryId, setSelectedCountryId] = useState<string>("");
+  const [selectedRegionId, setSelectedRegionId] = useState<string>("");
+  const [selectedCityId, setSelectedCityId] = useState<string>("");
+
+  const [isCountriesLoading, setIsCountriesLoading] = useState(false);
+  const [isRegionsLoading, setIsRegionsLoading] = useState(false);
+  const [isCitiesLoading, setIsCitiesLoading] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadCountries = async () => {
+      setIsCountriesLoading(true);
+      try {
+        const data = await fetchCountries();
+        if (isMounted) {
+          setCountries(data);
+        }
+      } finally {
+        if (isMounted) {
+          setIsCountriesLoading(false);
+        }
+      }
+    };
+
+    void loadCountries();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    setRegions([]);
+    setCities([]);
+    setSelectedRegionId("");
+    setSelectedCityId("");
+
+    if (!selectedCountryId) {
+      return;
+    }
+
+    const loadRegions = async () => {
+      setIsRegionsLoading(true);
+      try {
+        const data = await fetchRegions(Number(selectedCountryId));
+        if (isMounted) {
+          setRegions(data);
+        }
+      } finally {
+        if (isMounted) {
+          setIsRegionsLoading(false);
+        }
+      }
+    };
+
+    void loadRegions();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedCountryId]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    setCities([]);
+    setSelectedCityId("");
+
+    if (!selectedRegionId) {
+      return;
+    }
+
+    const loadCities = async () => {
+      setIsCitiesLoading(true);
+      try {
+        const data = await fetchCities(Number(selectedRegionId));
+        if (isMounted) {
+          setCities(data);
+        }
+      } finally {
+        if (isMounted) {
+          setIsCitiesLoading(false);
+        }
+      }
+    };
+
+    void loadCities();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedRegionId]);
+
   const formContent = (
-    <form className="space-y-4">
+    <form className="space-y-4" action={saveShippingAddress}>
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <label
@@ -86,69 +194,160 @@ export function ShippingAddressForm({
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <label
+            htmlFor="country"
+            className="text-xl font-semibold text-slate-100"
+          >
+            Country
+          </label>
+          <select
+            id="country"
+            name="country"
+            value={selectedCountryId}
+            onChange={(event) => {
+              setSelectedCountryId(event.target.value);
+            }}
+            className="h-12 w-full rounded-md border border-slate-600 bg-slate-700/70 px-3 text-base text-slate-100"
+            required
+          >
+            <option value="" disabled>
+              {isCountriesLoading ? "Loading countries..." : "Select country"}
+            </option>
+            {countries.map((country) => (
+              <option key={country.id} value={country.id}>
+                {country.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="space-y-2">
+          <label
+            htmlFor="region"
+            className="text-xl font-semibold text-slate-100"
+          >
+            Region
+          </label>
+          <select
+            id="region"
+            name="region"
+            value={selectedRegionId}
+            onChange={(event) => {
+              setSelectedRegionId(event.target.value);
+            }}
+            className="h-12 w-full rounded-md border border-slate-600 bg-slate-700/70 px-3 text-base text-slate-100"
+            disabled={!selectedCountryId || isRegionsLoading}
+            required
+          >
+            <option value="" disabled>
+              {!selectedCountryId
+                ? "Select country first"
+                : isRegionsLoading
+                  ? "Loading regions..."
+                  : "Select region"}
+            </option>
+            {regions.map((region) => (
+              <option key={region.id} value={region.id}>
+                {region.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-2">
+          <label
             htmlFor="city"
             className="text-xl font-semibold text-slate-100"
           >
             City
           </label>
-          <Input
+          <select
             id="city"
             name="city"
-            type="text"
-            placeholder="New York"
-            autoComplete="address-level2"
-            className="h-12 border-slate-600 bg-slate-700/70 text-base text-slate-100 placeholder:text-slate-400"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label
-            htmlFor="state"
-            className="text-xl font-semibold text-slate-100"
+            value={selectedCityId}
+            onChange={(event) => {
+              setSelectedCityId(event.target.value);
+            }}
+            className="h-12 w-full rounded-md border border-slate-600 bg-slate-700/70 px-3 text-base text-slate-100"
+            disabled={!selectedRegionId || isCitiesLoading}
+            required
           >
-            State / Province
-          </label>
-          <Input
-            id="state"
-            name="state"
-            type="text"
-            placeholder="NY"
-            autoComplete="address-level1"
-            className="h-12 border-slate-600 bg-slate-700/70 text-base text-slate-100 placeholder:text-slate-400"
-          />
+            <option value="" disabled>
+              {!selectedRegionId
+                ? "Select region first"
+                : isCitiesLoading
+                  ? "Loading cities..."
+                  : "Select city"}
+            </option>
+            {cities.map((city) => (
+              <option key={city.id} value={city.id}>
+                {city.name}
+              </option>
+            ))}
+          </select>
         </div>
-      </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <label htmlFor="zip" className="text-xl font-semibold text-slate-100">
             ZIP / Postal Code
           </label>
           <Input
             id="zip"
-            name="zip"
+            name="zip_code"
             type="text"
             placeholder="10001"
             autoComplete="postal-code"
             className="h-12 border-slate-600 bg-slate-700/70 text-base text-slate-100 placeholder:text-slate-400"
           />
         </div>
+      </div>
 
+      <div className="grid gap-4 md:grid-cols-2 md:items-end">
         <div className="space-y-2">
           <label
-            htmlFor="country"
+            htmlFor="place"
             className="text-xl font-semibold text-slate-100"
           >
-            Country
+            Place
           </label>
-          <Input
-            id="country"
-            name="country"
-            type="text"
-            placeholder="United States"
-            autoComplete="country-name"
-            className="h-12 border-slate-600 bg-slate-700/70 text-base text-slate-100 placeholder:text-slate-400"
-          />
+          <select
+            id="place"
+            name="place"
+            defaultValue="home"
+            className="h-12 w-full rounded-md border border-slate-600 bg-slate-700/70 px-3 text-base text-slate-100"
+          >
+            <option value="home">Home</option>
+            <option value="work">Work</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div className="space-y-2">
+          <span className="block text-xl font-semibold text-slate-100">
+            Default Address
+          </span>
+          <label
+            htmlFor="is-default"
+            className="flex h-12 w-full cursor-pointer items-center gap-3 rounded-md border border-slate-600 bg-slate-700/70 px-3 text-base text-slate-100"
+          >
+            <input
+              id="is-default"
+              name="is_default"
+              type="checkbox"
+              className="h-5 w-5 rounded border-slate-500 bg-slate-800 accent-yellow-400"
+            />
+            <span>Set as default address</span>
+          </label>
+        </div>
+
+        <div className="md:col-span-2 flex justify-end">
+          <Button
+            type="submit"
+            className="h-12 rounded-xl bg-yellow-400 px-8 text-base font-semibold text-slate-900 hover:bg-yellow-300"
+          >
+            Save
+          </Button>
         </div>
       </div>
     </form>

@@ -10,13 +10,13 @@ fake = Faker()
 
 
 def populate_orders(count: int = 10):
-    print(f"Rozpoczynam generowanie {count} pełnych zamówień...")
+    print(f"Start of generating {count} full order...")
 
     buyers = list(BuyerProfile.objects.all())
     products = list(Product.objects.all())
 
     if not buyers or not products:
-        print("Brak kupujących lub produktów! Uruchom najpierw populate_users i populate_products.")
+        print("Error: lack of buyers or products!")
         return
 
     order_status_keys = list(Order.ORDER_STATUS_CHOICES.keys())
@@ -66,8 +66,7 @@ def populate_orders(count: int = 10):
                     shipping_status=random.choice(shipment_status_keys),
                     tracking_number=fake.unique.bothify(text='INPOST-########'),
                     estimated_delivery=fake.future_date(),
-                    shipping_cost=shipping_cost
-                )
+                    shipping_cost=shipping_cost                )
 
                 current_order_total += shipping_cost
 
@@ -90,4 +89,4 @@ def populate_orders(count: int = 10):
 
             created_orders += 1
 
-    print(f"Sukces! Utworzono {created_orders} poprawnych zamówień.")
+    print(f"Success! Created {created_orders} valid orders.")

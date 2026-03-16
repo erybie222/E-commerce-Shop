@@ -62,7 +62,10 @@ export interface ShippingAddress {
   is_default: boolean;
   place: 'home' | 'work' | 'other';
 }
-
+export type LocationItem = {
+  id: number;
+  name: string;
+};
 // export interface User {
 //     id: number;
 //     username: string;

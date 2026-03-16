@@ -39,6 +39,60 @@ export const RegisterFormSchema = z.object({
   message: 'Passwords do not match.',
 })
 
+export const ShippingAddressFormSchema = z.object({
+  country: z.string().min(1, { message: 'Please select a country.' }),
+  region: z.string().min(1, { message: 'Please select a region.' }),
+  city: z.string().min(1, { message: 'Please select a city.' }),
+  
+  zip_code: z
+    .string()
+    .min(2, { message: 'Zip code is required.' })
+    .max(10, { message: 'Zip code cannot exceed 10 characters.' })
+    .trim(),
+    
+  phone_prefix: z
+    .string()
+    .max(4, { message: 'Prefix cannot exceed 4 characters.' })
+    .optional(), 
+    
+  phone_number: z
+    .string()
+    .length(9, { message: 'Phone number must be exactly 9 characters long.' })
+    .regex(/^[0-9]+$/, { message: 'Phone number can only contain digits.' })
+    .trim(),
+    
+  street_name: z
+    .string()
+    .min(2, { message: 'Street name must be at least 2 characters long.' })
+    .max(30, { message: 'Street name cannot exceed 30 characters.' })
+    .trim(),
+    
+  street_number: z
+    .string()
+    .min(1, { message: 'Street number is required.' })
+    .max(10, { message: 'Street number cannot exceed 10 characters.' })
+    .trim(),
+    
+  is_default: z.boolean().default(false).optional(),
+})
+
+export type ShippingAddressFormState =
+  | {
+      errors?: {
+        country?: string[]
+        region?: string[]
+        city?: string[]
+        zip_code?: string[]
+        phone_prefix?: string[]
+        phone_number?: string[]
+        street_name?: string[]
+        street_number?: string[]
+        is_default?: string[]
+      }
+      message?: string
+    }
+  | undefined
+
 export type RegisterFormState =
     | {
         errors?: {

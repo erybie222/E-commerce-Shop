@@ -44,7 +44,8 @@ def create_buyers_with_shipping_address(count: int =10) -> list[BuyerProfile]:
             phone_number=fake.phone_number()[:9],
             street_name=fake.street_name(),
             street_number=fake.random_int(min=1, max=200),
-            is_default=True
+            is_default=True,
+            place = random.choice(['home', 'work', 'other'])
         )
         buyers.append(buyer)
     return buyers
