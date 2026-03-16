@@ -8,7 +8,7 @@ export interface Category {
 }
 
 export interface ShippingMethod {
-  id: "standard" | "priority" | "express";
+  code: "standard" | "priority" | "express";
   name: string;
   eta: string;
   price: number;

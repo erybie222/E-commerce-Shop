@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { OrderItem, Product } from '../types'; 
+import { SHIPPING_METHODS } from '../../lib/constants/shipping';
 
 
 
@@ -8,22 +9,32 @@ interface CartState {
   items: OrderItem[];
   hasHydrated: boolean;
   shippingCost: number;
-  shippingMethodId: number | null;
+  shippingMethodCode: "standard" | "priority" | "express";
   setHasHydrated: (value: boolean) => void;
+  setShippingMethodCode: (code: "standard" | "priority" | "express") => void;
   addToCart: (product: Product) => void;
   removeFromCart: (productId: number) => void;
   changeQuantity: (productId: number, quantity: number) => void;
   clearCart: () => void;
 }
 
+const defaultMethod = SHIPPING_METHODS.find((method) => method.code === 'standard');
+
 export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
       hasHydrated: false,
-      shippingCost: 0,
-      shippingMethodId: null,
+      shippingCost: defaultMethod.price,
+      shippingMethodCode: defaultMethod.code,
       setHasHydrated: (value) => set({ hasHydrated: value }),
+      setShippingMethodCode: (code) => {
+        const selectedMethod = SHIPPING_METHODS.find((method) => method.code === code);
+        set({
+          shippingMethodCode: code,
+          shippingCost: selectedMethod.price,
+        });
+      },
 
       addToCart: (productToAdd) => {
         const currentItems = get().items;

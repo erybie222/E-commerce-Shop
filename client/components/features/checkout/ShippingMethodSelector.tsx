@@ -1,14 +1,14 @@
 "use client";
 
 import { Package, Truck } from "lucide-react";
-import { useState } from "react";
-
-import { ShippingMethod } from "@/src/types";
 import { SHIPPING_METHODS } from "@/lib/constants/shipping";
+import { useCartStore } from "@/src/store/useCartStore";
 
 export function ShippingMethodSelector() {
-  const [selectedMethod, setSelectedMethod] =
-    useState<ShippingMethod["id"]>("standard");
+  const selectedMethodCode = useCartStore((state) => state.shippingMethodCode);
+  const setShippingMethodCode = useCartStore(
+    (state) => state.setShippingMethodCode,
+  );
 
   return (
     <section className="rounded-2xl border border-slate-700 bg-slate-900/70 p-5 sm:p-6">
@@ -21,20 +21,22 @@ export function ShippingMethodSelector() {
 
       <div className="space-y-4">
         {SHIPPING_METHODS.map((method) => {
-          const isSelected = selectedMethod === method.id;
+          const isSelected = selectedMethodCode === method.code;
+          const inputId = `shipping-method-${method.code}`;
+
           return (
             <label
-              key={method.id}
-              htmlFor={method.id}
+              key={method.code}
+              htmlFor={inputId}
               className="block cursor-pointer"
             >
               <input
-                id={method.id}
+                id={inputId}
                 type="radio"
                 name="shipping_method"
-                value={method.id}
+                value={method.code}
                 checked={isSelected}
-                onChange={() => setSelectedMethod(method.id)}
+                onChange={() => setShippingMethodCode(method.code)}
                 className="sr-only"
               />
 
@@ -46,7 +48,7 @@ export function ShippingMethodSelector() {
                     }`}
                   />
 
-                  {method.id === "standard" ? (
+                  {method.code === "standard" ? (
                     <Package className="h-5 w-5 text-slate-400" />
                   ) : (
                     <Truck className="h-5 w-5 text-slate-400" />
