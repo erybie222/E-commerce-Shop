@@ -5,6 +5,7 @@ from products.models import Product
 from rest_framework import serializers
 from products.serializers import ProductSerializer
 from django.db import transaction
+from decimal import Decimal
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product_details = ProductSerializer(source='product', read_only=True)
@@ -15,7 +16,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
         read_only_fields = ['price']
 
 class ShipmentSerializer(serializers.ModelSerializer):
-    items = OrderItemSerializer(many=True, read_only=True)
+    items = OrderItemSerializer(many=True, read_only=True, source='order_items')
     class Meta:
         model = Shipment
         fields = "__all__"
@@ -29,7 +30,7 @@ class ShipmentStatusUpdateSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     shipments = ShipmentSerializer(many=True, read_only=True)
-    items = OrderItemSerializer(many=True)
+    items = OrderItemSerializer(many=True, source='orderitem_set')
     shipping_address = serializers.PrimaryKeyRelatedField(
         queryset=ShippingAddress.objects.all()
     )
@@ -45,15 +46,15 @@ class OrderSerializer(serializers.ModelSerializer):
             self.fields['shipping_address'].queryset = ShippingAddress.objects.filter(buyer_profile=request.user.buyer_profile)
 
     def create(self, validated_data):
-        items_data = validated_data.pop('items')
-        shipping_address = validated_data.get('shipping_address')
+        items_data = validated_data.pop('orderitem_set')
+        validated_data.pop('buyer', None)
         buyer_profile = self.context['request'].user.buyer_profile
 
         with transaction.atomic():
 
             order = Order.objects.create(buyer=buyer_profile, **validated_data, total_price=0)
 
-            total_price = 0
+            total_price = Decimal('0.00')
 
             items_by_seller = {}
 
@@ -78,7 +79,7 @@ class OrderSerializer(serializers.ModelSerializer):
                     sender=seller,
                     order=order,
                     shipping_status='NOT_SENT',
-                    shipping_cost=15.00
+                    shipping_cost=Decimal('15.00')
                 )
                 total_price += shipment.shipping_cost
 

@@ -181,6 +181,58 @@ export async function saveShippingAddress(
   }
 }
 
+export async function saveOrder(
+  payload: {
+    shipping_address: number;
+    items: Array<{ product_id: number; quantity: number }>;
+  },
+  accessToken?: string,
+): Promise<{ id: number }> {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const res = await fetchWithAuthRetry(
+    `${API_BASE_URL}/orders/`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    },
+    accessToken,
+  );
+
+  if (!res.ok) {
+    let message = `Failed to place order (${res.status})`;
+    try {
+      const data = await res.json();
+      const details =
+        typeof data === "string"
+          ? data
+          : Object.entries(data)
+              .map(([field, value]) => {
+                if (Array.isArray(value)) {
+                  return `${field}: ${value.join(", ")}`;
+                }
+                return `${field}: ${String(value)}`;
+              })
+              .join(" | ");
+      if (details) {
+        message = `${message} - ${details}`;
+      }
+    } catch {
+      const text = await res.text().catch(() => "");
+      if (text) {
+        message = `${message} - ${text}`;
+      }
+    }
+
+    throw new Error(message);
+  }
+
+  const data = await res.json();
+  return { id: Number(data.id) };
+}
+
 
 export async function fetchCountries(): Promise<LocationItem[]> {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;

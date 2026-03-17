@@ -6,7 +6,11 @@ import { CheckoutOrderSummary } from "@/components/features/checkout/CheckoutOrd
 import { useCartStore } from "@/src/store/useCartStore";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getShippingAddresses, saveShippingAddress } from "@/lib/api";
+import {
+  getShippingAddresses,
+  saveOrder,
+  saveShippingAddress,
+} from "@/lib/api";
 import { ShippingAddress } from "@/src/types";
 
 export default function CheckoutClient() {
@@ -14,9 +18,15 @@ export default function CheckoutClient() {
   const hasHydrated = useCartStore((state) => state.hasHydrated);
   const cartItems = useCartStore((state) => state.items);
   const shippingCost = useCartStore((state) => state.shippingCost);
+  const clearCart = useCartStore((state) => state.clearCart);
   const [shippingAddresses, setShippingAddresses] = useState<ShippingAddress[]>(
     [],
   );
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(
+    null,
+  );
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [orderError, setOrderError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -45,10 +55,63 @@ export default function CheckoutClient() {
     }
   }, [cartItems.length, hasHydrated, router]);
 
+  useEffect(() => {
+    if (shippingAddresses.length === 0) {
+      setSelectedAddressId(null);
+      return;
+    }
+
+    const selectedStillExists = shippingAddresses.some(
+      (address) => address.id === selectedAddressId,
+    );
+    if (selectedStillExists) {
+      return;
+    }
+
+    const defaultAddress = shippingAddresses.find(
+      (address) => address.is_default,
+    );
+    setSelectedAddressId(defaultAddress?.id ?? shippingAddresses[0].id);
+  }, [selectedAddressId, shippingAddresses]);
+
   const handleSaveShippingAddress = async (formData: FormData) => {
     await saveShippingAddress(formData);
     const data = await getShippingAddresses();
     setShippingAddresses(data ?? []);
+  };
+
+  const handlePlaceOrder = async () => {
+    if (!selectedAddressId) {
+      setOrderError("Select shipping address before placing your order.");
+      return;
+    }
+
+    if (cartItems.length === 0) {
+      setOrderError("Your cart is empty.");
+      return;
+    }
+
+    try {
+      setOrderError(null);
+      setIsPlacingOrder(true);
+
+      await saveOrder({
+        shipping_address: selectedAddressId,
+        items: cartItems.map((item) => ({
+          product_id: item.product_id,
+          quantity: Number(item.quantity),
+        })),
+      });
+
+      clearCart();
+      router.push("/");
+    } catch (error) {
+      setOrderError(
+        error instanceof Error ? error.message : "Failed to place order.",
+      );
+    } finally {
+      setIsPlacingOrder(false);
+    }
   };
 
   return (
@@ -59,12 +122,17 @@ export default function CheckoutClient() {
             <ShippingAddressSection
               saveShippingAddress={handleSaveShippingAddress}
               listOfShippingAddresses={shippingAddresses}
+              selectedAddressId={selectedAddressId}
+              onSelectAddress={setSelectedAddressId}
             />
             <ShippingMethodSelector />
           </div>
           <CheckoutOrderSummary
             cartItems={cartItems}
             shippingCost={shippingCost}
+            placeOrder={handlePlaceOrder}
+            isPlacingOrder={isPlacingOrder}
+            orderError={orderError}
           />
         </div>
       </div>

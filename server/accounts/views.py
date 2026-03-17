@@ -18,7 +18,7 @@ class ShippingAddressViewSet(viewsets.ModelViewSet):
         if not user or not user.is_authenticated:
             return ShippingAddress.objects.none()
 
-        buyer_profile, _ = BuyerProfile.objects.get_or_create(user=user)
+        buyer_profile, _ = BuyerProfile.objects.get(user=user)
         return ShippingAddress.objects.filter(buyer_profile=buyer_profile)
 
     def perform_create(self, serializer):
@@ -26,7 +26,7 @@ class ShippingAddressViewSet(viewsets.ModelViewSet):
         if not user or not user.is_authenticated:
             raise PermissionDenied("Authentication required.")
 
-        buyer_profile, _ = BuyerProfile.objects.get_or_create(user=user)
+        buyer_profile, _ = BuyerProfile.objects.get(user=user)
         serializer.save(buyer_profile=buyer_profile)
 
 

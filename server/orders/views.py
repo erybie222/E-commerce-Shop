@@ -48,5 +48,5 @@ class OrderViewSet(viewsets.ModelViewSet):
         if not hasattr(user, "buyer_profile"):
             raise PermissionDenied("Only buyers can place an order.")
         else:
-            serializer.save(buyer=user.buyer_profile)
+            serializer.save()
 

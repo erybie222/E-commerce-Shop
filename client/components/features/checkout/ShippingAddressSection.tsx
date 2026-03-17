@@ -9,6 +9,8 @@ import { fetchCities, fetchCountries, fetchRegions } from "@/lib/api";
 interface ShippingAddressSectionProps {
   listOfShippingAddresses?: ShippingAddress[];
   saveShippingAddress: (formData: FormData) => Promise<void>;
+  selectedAddressId: number | null;
+  onSelectAddress: (addressId: number | null) => void;
 }
 
 function getAddressIcon(place: ShippingAddress["place"]) {
@@ -34,17 +36,13 @@ function getAddressLabel(place: ShippingAddress["place"]) {
 export function ShippingAddressSection({
   listOfShippingAddresses = [],
   saveShippingAddress,
+  selectedAddressId,
+  onSelectAddress,
 }: ShippingAddressSectionProps) {
   const [countryNames, setCountryNames] = useState<Record<number, string>>({});
   const [regionNames, setRegionNames] = useState<Record<number, string>>({});
   const [cityNames, setCityNames] = useState<Record<number, string>>({});
 
-  const defaultAddress = listOfShippingAddresses.find(
-    (address) => address.is_default,
-  );
-  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(
-    defaultAddress?.id ?? listOfShippingAddresses[0]?.id ?? null,
-  );
   const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
 
   useEffect(() => {
@@ -132,7 +130,7 @@ export function ShippingAddressSection({
             <article
               className="rounded-xl border border-slate-700 p-5"
               onClick={() => {
-                setSelectedAddressId(address.id);
+                onSelectAddress(address.id);
                 setIsAddingNewAddress(false);
               }}
               key={address.id}
@@ -178,7 +176,7 @@ export function ShippingAddressSection({
         <button
           type="button"
           onClick={() => {
-            setSelectedAddressId(null);
+            onSelectAddress(null);
             setIsAddingNewAddress(!isAddingNewAddress);
           }}
           className="flex w-full items-center gap-3 rounded-xl border border-dashed border-slate-600 px-5 py-4 text-left text-slate-100"
